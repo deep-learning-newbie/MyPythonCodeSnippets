@@ -74,3 +74,26 @@ class Geometrical_Transformation:
         calculated = np.dot(M, corners.T).T
         calculated = calculated.reshape(4, 2).astype(int)
         return calculated
+
+    def shear_image_bound(self, shear_factor):
+        h, w, chnl = self.img.shape
+        img = self.img.copy()
+        if shear_factor < 0:
+            img = self.flip_image(img)
+
+        M = np.array([[1, abs(shear_factor), 0], [0, 1, 0]])
+        nW = img.shape[1] + abs(shear_factor * img.shape[0])
+        shear_img = cv2.warpAffine(img, M, (int(nW), img.shape[0]))
+        shear_img = self.flip_image(shear_img)
+
+        if shear_factor < 0:
+            shear_img = self.flip_image(shear_img)
+        return shear_img
+
+    def shear_roi(self, corners, shear_factor):
+        print('sdf')
+
+
+
+
+

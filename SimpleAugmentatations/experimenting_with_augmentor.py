@@ -62,13 +62,14 @@ def test_rotate_kv():
     rgb_im_r = r.perform_operation(rgb_im)
     rgb_im_r[0].save('img_folder/rotate.png')
 
-#test_rotate_kv()
 
 import cv2
 from SimpleAugmentatations.ColorBrightness import  Color_Brightness
+from SimpleAugmentatations.GeometricalTransformations import  Geometrical_Transformation
 
 img = cv2.imread('img_folder/opencv_logo.png')
 obj = Color_Brightness(img)
 obj.get_brightness_scale()
+
 
 
