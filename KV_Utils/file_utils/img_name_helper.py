@@ -32,3 +32,8 @@ def get_files_list(in_dir, ext, is_srt=False):
     if is_srt:
         list_files.sort()
     return list_files
+
+def create_clean_dirs(dir_path):
+    if os.path.exists(dir_path):
+        shutil.rmtree(dir_path)
+    os.makedirs(dir_path)
