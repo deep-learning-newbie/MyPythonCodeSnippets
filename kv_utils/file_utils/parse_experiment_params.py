@@ -22,6 +22,7 @@ class ParseExpParams:
         self.validation_frac = self.config['Experiment_Params']['Validation_Fraction']
         self.dataset_shuffle = self.config['Experiment_Params']['Dataset_Shuffle']
         self.no_system_threads = self.config['Experiment_Params']['No_System_Threads']
+        self.cyclic_lr_policy = self.config['Experiment_Params']['Cyclic_LR']
 
         ## init the vars from cfg file
         #self.init_hyperparams()
@@ -71,6 +72,11 @@ class ParseExpParams:
 
     def get_dataset_shuffle(self):
         if self.dataset_shuffle == 'True':
+            return True
+        else:
+            return False
+    def get_cyclic_lr_policy(self):
+        if self.cyclic_lr_policy == 'True':
             return True
         else:
             return False
