@@ -27,7 +27,7 @@ def augment_rst_corners(RST_Mat, corners):
 def get_augmented_rois(rst_corners, img_w, img_h):
     xcordinates = rst_corners[:, [0, 2, 4, 6]]
     ycordinates = rst_corners[:, [1, 3, 5, 7]]
-    ##cliping oof the cordinates if out of image
+    ##cliping of the cordinates if out of image
     xcordinates[xcordinates < 0] = 0
     xcordinates[xcordinates > img_w] = img_w - 1
     ycordinates[ycordinates < 0] = 0

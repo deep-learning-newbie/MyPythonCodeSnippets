@@ -37,3 +37,6 @@ def create_clean_dirs(dir_path):
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
     os.makedirs(dir_path)
+
+def is_file_empty(file_path):
+	return if os.stat(file_path).st_size == 0

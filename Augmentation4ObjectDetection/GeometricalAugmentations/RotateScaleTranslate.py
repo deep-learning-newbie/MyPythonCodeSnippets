@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import random
 import math
-from bbox_utils import *
+from .bbox_utils import *
 #random.seed(18)
 
 class RandomRST_Transformation(object):
@@ -14,14 +14,14 @@ class RandomRST_Transformation(object):
         self.ty = ty
         self.scale_range = scale_range
 
-    def random_rotate_scale_translate(self, image, bboxes=None):
-        if True:
-        #if random.random() > self.p:
+    def process_augment(self, image, bboxes=None):
+        #if True:
+        if random.random() < self.p:
             if self.scale_range > 1 or self.tx > 1 or self.ty > 1:
                 print('Input Value out of range')
                 exit(-1)
             (h, w) = image.shape[:2]
-            (cx, cy) = (w // 2, h // 2)
+            (cx, cy) = (w // 2, h // 2) ##int center
             angle = int(random.uniform(-self.angle_range, self.angle_range))
             scale = random.uniform(1 - self.scale_range, 1 + self.scale_range)
             RST = cv2.getRotationMatrix2D((cx, cy), angle, scale)
@@ -29,15 +29,15 @@ class RandomRST_Transformation(object):
             ty = int(random.uniform(0, self.ty) * h)
             RST[0, 2] += - tx
             RST[1, 2] += - ty
-            affine_image = cv2.warpAffine(image, RST, (w, h))
+            rst_image = cv2.warpAffine(image, RST, (w, h))
+            rst_rois = None
             if bboxes is not None:
                 corners = get_corners(bboxes)
                 rst_corners = augment_rst_corners(RST, corners)
                 rst_rois = get_augmented_rois(rst_corners, w, h)
-            return affine_image, rst_rois
+            return rst_image, rst_rois
         else:
-            return image.copy(), bboxes.copy()
-
+            return image, bboxes
 
     def get_corners(self, bboxes):
         xmin = bboxes[:, 0].reshape(-1, 1)
@@ -77,9 +77,6 @@ class RandomRST_Transformation(object):
         ymax = np.max(ycordinates, 1).reshape(-1, 1)
         augmented_rois = np.hstack((xmin, ymin, xmax, ymax))
         return augmented_rois
-
-class Resize(object)
-    def __init__(self):
 
 ##test
 
