@@ -14,9 +14,14 @@ def get_filename_noext(file_name):
     file_name_no_ext, file_ext = os.path.splitext(file_name)
     return file_name_no_ext
 
-def get_files_list(in_dir, ext, is_srt=False):
-    src_dir = in_dir + '/*.' + ext
-    list_files = glob.glob(src_dir)
+def get_files_list(in_dir, ext, is_recursive = True, is_srt=False):
+    list_images = []
+    if is_recursive:
+        src_dir = in_dir + '/**/*.' + ext
+        list_images = glob.glob(src_dir, recursive=True)
+    else:
+        src_dir = in_dir + '/*.' + ext
+        list_files = glob.glob(src_dir)
     if is_srt:
         list_files.sort()
     return list_files
