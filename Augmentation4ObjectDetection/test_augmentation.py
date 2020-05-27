@@ -2,11 +2,12 @@ import os
 import sys
 import cv2
 import numpy as np
-from GeometricalAugmentations.RotateScaleTranslate import RandomRST_Transformation
-from GeometricalAugmentations.RandomRescale import RandomReScale
-from GeometricalAugmentations.RandomFlipShear import RandomHorizontalFlip
-from GeometricalAugmentations.RandomFlipShear import RandomShear
-
+from Augmentation4ObjectDetection.GeometricalAugmentations import RotateScaleTranslate
+from Augmentation4ObjectDetection.GeometricalAugmentations.RandomRescale import RandomReScale
+from Augmentation4ObjectDetection.GeometricalAugmentations.RandomFlipShear import RandomHorizontalFlip
+from Augmentation4ObjectDetection.GeometricalAugmentations.RandomFlipShear import RandomShear
+from Augmentation4ObjectDetection.GeometricalAugmentations.MosaicAugmentation import MosaicAugmentation
+from Augmentation4ObjectDetection.GeometricalAugmentations.StitchAugmentation import StitchAugmentation
 lib_path = os.path.join(os.path.realpath("."), "data_aug")
 #sys.path.append(lib_path)
 
@@ -84,15 +85,40 @@ def test_rst():
     iron_man_roi = draw_rect(img, rois, color)
     cv2.imwrite(img_path1, iron_man_roi)
 
-    obj_rst = RandomRST_Transformation(15, 0.1, 0.1, 0.1)
+    obj_rst = RotateScaleTranslate(15, 0.1, 0.1, 0.1)
     aug_img, aug_rois = obj_rst.random_rotate_scale_translate(img, rois)
     color_red = (0, 0, 255)
     aug_img = draw_rect(aug_img, aug_rois, color_red)
     cv2.imwrite(img_aug_path, aug_img)
 
+def test_mosaic():
+    obj_mosiac  = MosaicAugmentation(400)
+    img1 = cv2.imread(img_path)
+    img2 = img1.copy()
+    img3 = img1.copy()
+    img4 = img1.copy()
+    aug_img = obj_mosiac.process_augmentation([img1, img2, img3, img4])
+    cv2.imwrite(img_aug_path, aug_img)
+
+def test_stitch():
+    rois = np.array([[397, 108, 465, 190],
+                     [591, 128, 608, 164]])
+    rois1 = rois.copy(); rois2 = rois.copy(); rois3 = rois.copy(); rois4 = rois.copy()
+    obj_stitch = StitchAugmentation((600, 800, 3))
+    img1 = cv2.imread(img_path)
+    img2 = img1.copy()
+    img3 = img1.copy()
+    img4 = img1.copy()
+    aug_img, aug_rois = obj_stitch.process_augmentation([img1, img2, img3, img4], [rois1, rois2, rois3, rois4])
+    color_red = (0, 0, 255)
+    aug_img = draw_rect(aug_img, aug_rois, color_red)
+    cv2.imwrite(img_aug_path, aug_img)
+
+
+test_stitch()
 #test_rst()
 #test_rescale()
 #test_horizontal_flip()
-test_shear()
+#test_shear()
 
 
