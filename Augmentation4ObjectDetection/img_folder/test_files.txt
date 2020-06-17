@@ -1,0 +1,4 @@
+/home/shunya/Datasets/esad/train/set2/RARP4_frame_2169.jpg
+/home/shunya/Datasets/esad/train/set2/RARP4_frame_8507.jpg
+/home/shunya/Datasets/esad/train/set2/RARP4_frame_8543.jpg
+/home/shunya/Datasets/esad/train/set2/RARP4_frame_8431.jpg

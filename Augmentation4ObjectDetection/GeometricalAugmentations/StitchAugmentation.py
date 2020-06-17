@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import random
 
 class StitchAugmentation(object):
     def __init__(self, standard_img_shape):
@@ -8,6 +7,7 @@ class StitchAugmentation(object):
         self.std_img_wd = standard_img_shape[1] if standard_img_shape[1] % 2 == 0 else standard_img_shape[1] + 1
         self.chnls = standard_img_shape[2]
         self.stitch_size_dims = (self.std_img_ht, self.std_img_wd, self.chnls)
+
     def get_resized_translated_rois(self, index, original_shape, orig_bboxes):
         wd_ratio = (self.std_img_wd / 2) / original_shape[1]
         ht_ratio = (self.std_img_ht / 2) / original_shape[0]
@@ -35,20 +35,28 @@ class StitchAugmentation(object):
 
         return rsz_bboxes
 
-    def process_augmentation(self, list4imgs, list4rois=None):
+    def process_augmentation(self, list4imgs, list4rois, list4lbls):
         assert len(list4imgs) == 4, 'Need 4 images to build MOSAIC'
         assert len(list4rois) == 4, 'Need 4 rois to build MOSAIC'
+
         aug_img = np.ones(self.stitch_size_dims, dtype="uint8")
         aug_rois = np.zeros((1, 4), dtype=float)
+        aug_lbls = np.zeros((1, 1), dtype=float)
+
         for ii, index in enumerate(range(len(list4imgs))):
             orig_img = list4imgs[ii]
             orig_roi = list4rois[ii]
+            orig_lbl = list4lbls[ii]
+            if orig_lbl is not None and orig_roi is not None:
+                assert orig_lbl.ndim == 2, 'Label should be 2 Dims'
+            #orig_lbl = np.expand_dims(orig_lbl, axis=1)
+
             rsz_img = cv2.resize(orig_img, (self.std_img_wd // 2, self.std_img_ht// 2))
             rsz_ht, rsz_wd = rsz_img.shape[:2]
 
-            if orig_roi is not None:
-                rsz_rois = self.get_resized_translated_rois(ii, orig_img.shape, orig_roi)
-                aug_rois = np.vstack((rsz_rois, aug_rois))
+            rsz_rois = self.get_resized_translated_rois(ii, orig_img.shape, orig_roi)
+            aug_rois = np.vstack((aug_rois, rsz_rois))
+            aug_lbls = np.vstack((aug_lbls, orig_lbl))
 
             if ii == 0: ##top left
                 bx1 = 0; by1 = 0; bx2 = rsz_wd; by2 = rsz_ht
@@ -60,7 +68,10 @@ class StitchAugmentation(object):
                 bx1 = rsz_wd; by1 = rsz_ht; bx2 = self.std_img_wd; by2 = self.std_img_ht
 
             aug_img[by1:by2, bx1:bx2] = rsz_img
-        aug_rois = aug_rois[:-1, :]
-        return aug_img, aug_rois
+
+        aug_rois = aug_rois[1:, :]
+        aug_lbls = aug_lbls[1:, :]
+
+        return aug_img, aug_rois, aug_lbls
 
 
