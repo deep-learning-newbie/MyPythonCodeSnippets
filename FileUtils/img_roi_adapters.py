@@ -35,10 +35,16 @@ def pascal2yolo_rois(pascal_rois, image_shape):
 
 def yolo2pascal_rois(yolo_rois, image_shape):
     img_ht, img_wd = image_shape[:2]
-    x1 = (yolo_rois[:, 0] - yolo_rois[:, 2] / 2) * img_wd
-    y1 = (yolo_rois[:, 1] - yolo_rois[:, 3] / 2) * img_ht
-    x2 = (yolo_rois[:, 0] + yolo_rois[:, 2] / 2) * img_wd
-    y2 = (yolo_rois[:, 1] + yolo_rois[:, 3] / 2) * img_ht
+
+    xmid = yolo_rois[:, 0]
+    ymid = yolo_rois[:, 1]
+    wd_half = yolo_rois[:, 2] / 2
+    ht_half = yolo_rois[:, 3] / 2
+
+    x1 = (xmid - wd_half) * img_wd
+    y1 = (ymid - ht_half) * img_ht
+    x2 = (xmid + wd_half) * img_wd
+    y2 = (ymid + ht_half) * img_ht
 
     pascal_rois = np.hstack([np.expand_dims(x1, axis=1), np.expand_dims(y1, axis=1),
                       np.expand_dims(x2, axis=1), np.expand_dims(y2, axis=1)])

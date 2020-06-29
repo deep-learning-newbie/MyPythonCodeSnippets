@@ -49,8 +49,10 @@ class StitchAugmentation(object):
             orig_lbl = list4lbls[ii]
 
             if orig_lbl is not None and orig_roi is not None:
-                assert orig_lbl.ndim == 2, 'Label should be 2 Dims'
-            #orig_lbl = np.expand_dims(orig_lbl, axis=1)
+                #assert orig_lbl.ndim == 2, 'Label should be 2 Dims'
+                if orig_lbl.ndim != 2:
+                    print('Label should be 2 Dims')
+                    orig_lbl = np.expand_dims(orig_lbl, axis=1)
 
             rsz_img = cv2.resize(orig_img, (self.std_img_wd // 2, self.std_img_ht// 2))
             rsz_ht, rsz_wd = rsz_img.shape[:2]
